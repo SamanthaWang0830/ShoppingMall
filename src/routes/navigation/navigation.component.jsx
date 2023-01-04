@@ -7,6 +7,7 @@ import CartIcon from '../../components/cart-icon/cart-icon.component'
 import CartDropdown from '../../components/cart-dropdown/cart-dropdown.component'
 import {CartContext} from '../../contexts/cart.context'
 import { NavigationContainer ,LogoContainer,NavLinks,NavLink} from "./navigation.styles";
+
  
 const Navigation=()=>{
   //这个组件中只想读取currentUser
