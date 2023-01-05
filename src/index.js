@@ -7,6 +7,9 @@ import {UserProvider} from './contexts/user.context'
 import {CardProvider} from './contexts/cart.context'
 import { CategoriesProvider } from './contexts/categories.context';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { Elements } from '@stripe/react-stripe-js';
+import { stripePromise } from './utils/stripe/stripe.util';
+
 
 const client = new ApolloClient({
   uri: 'https://crwn-clothing.com/',
@@ -21,7 +24,9 @@ root.render(
       <UserProvider>
         <CategoriesProvider>
           <CardProvider>
-            <App/>
+            <Elements stripe={stripePromise}>
+              <App />
+            </Elements>
           </CardProvider>
         </CategoriesProvider>
       </UserProvider>

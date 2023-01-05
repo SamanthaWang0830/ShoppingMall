@@ -1,4 +1,4 @@
-import { BaseButton,GoogleSignInButton,InvertedButton } from "./button.styles"
+import { BaseButton,GoogleSignInButton,InvertedButton,SpinnerContainer } from "./button.styles"
 
 //有不同种类的按钮
 export const button_type_classes= {
@@ -17,11 +17,11 @@ const getButton=(buttonType=button_type_classes.base)=>(
 )
 
 //{children} 子元素
-const Button=({children, buttonType, ...otherProps})=>{
+const Button=({children, buttonType, isLoading, ...otherProps})=>{
     const CustomButton=getButton(buttonType)
     return (
-        <CustomButton {...otherProps}>
-            {children}
+        <CustomButton disabled={isLoading} {...otherProps} >
+            {isLoading? <SpinnerContainer/> : children }
         </CustomButton>
     )
 }
