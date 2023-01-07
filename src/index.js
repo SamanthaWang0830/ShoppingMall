@@ -3,35 +3,21 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import './index.scss';
 import App from './App';
-import {UserProvider} from './contexts/user.context'
-import {CardProvider} from './contexts/cart.context'
-import { CategoriesProvider } from './contexts/categories.context';
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-import { Elements } from '@stripe/react-stripe-js';
-import { stripePromise } from './utils/stripe/stripe.util';
+//import {UserProvider} from './contexts/user.context'
+//import {CardProvider} from './contexts/cart.context'
+//import { CategoriesProvider } from './contexts/categories.context';
+import { Provider } from 'react-redux';
+import {store} from './store/store'
 
-
-const client = new ApolloClient({
-  uri: 'https://crwn-clothing.com/',
-  cache: new InMemoryCache(),
-});
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <ApolloProvider client={client}>x
     <BrowserRouter>
-      <UserProvider>
-        <CategoriesProvider>
-          <CardProvider>
-            <Elements stripe={stripePromise}>
+      <Provider store={store}>
               <App />
-            </Elements>
-          </CardProvider>
-        </CategoriesProvider>
-      </UserProvider>
+      </Provider> 
     </BrowserRouter>
-    </ApolloProvider>
   </React.StrictMode>
 );
 

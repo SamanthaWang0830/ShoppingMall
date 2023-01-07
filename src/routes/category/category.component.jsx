@@ -1,41 +1,32 @@
 import './category.styles.scss'
 import { useParams } from 'react-router-dom'
 import { useContext ,useState, useEffect,Fragment} from 'react'
-import { CategoriesContext } from '../../contexts/categories.context'
+//import { CategoriesContext } from '../../contexts/categories.context'
 import ProductCard from '../../components/product-card/product-card.component'
-import { gql,  useQuery} from '@apollo/client';
-
-
-const GET_CATEGORY = gql`
-query ($title: String) {
-  getCollectionsByTitle(title: $title) {
-    title
-    id
-    items {
-      id
-      name
-      price
-      imageUrl
-    }
-  }
-}
-`;
+import { getCategoriesAndDocuments} from "../../utils/firebase/firebase.utils";
+import { useSelector,useDispatch} from "react-redux";
+import { selectCategoriesMap ,setCategoriesMap} from '../../store/categoriesSlide';
 
 const Category=()=>{
     const {category}=useParams()
     //const {categoriesMap}=useContext(CategoriesContext)
-    const {loading, error, data}=useQuery(GET_CATEGORY, {
-        variables:{title:category}
-    })
-    const [products,setProducts]= useState([])
-    //如果category或者categoriesMap变了，就重新加载页面
+    const categoriesMap=useSelector(selectCategoriesMap)
+    const dispatch=useDispatch()
     useEffect(()=>{
-        if(data){
-            //双重destructure
-            const {getCollectionsByTitle:{items}}=data
-            setProducts(items)
-        }
-    },[category,data])
+        const getCategoriesMap = async () => {
+          const categoryMap = await getCategoriesAndDocuments();
+          console.log(categoryMap);
+          dispatch(setCategoriesMap(categoryMap));
+        };
+    
+        getCategoriesMap();
+    },[])
+    const [products,setProducts]= useState([])
+
+    //如果category或者categoriesMap变了，就重新加载页面
+    useEffect(() => {
+        setProducts(categoriesMap[category]);
+    }, [category, categoriesMap]);
 
     return (
     <Fragment>
