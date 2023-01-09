@@ -3,12 +3,16 @@ import {useEffect,Fragment} from 'react';
 import CategoryPreview from '../../components/category-preview/categort-preview.component';
 import { getCategoriesAndDocuments} from "../../utils/firebase/firebase.utils";
 import { useSelector,useDispatch} from "react-redux";
-import { selectCategoriesMap,setCategoriesMap } from '../../store/categoriesSlide';
+import { setCategoriesMap } from '../../store/categoriesSlide';
+import type { RootState } from "../../store/store";
+
+
+
 
 const CategoriesPreview = () => {
   const dispatch=useDispatch()
   //const { categoriesMap } = useContext(CategoriesContext);
-  const categoriesMap=useSelector(selectCategoriesMap)
+  const categoriesMap=useSelector((state: RootState) => state.categories.categoriesMap)
   useEffect(()=>{
     const getCategoriesMap = async () => {
       const categoryMap = await getCategoriesAndDocuments();
@@ -18,6 +22,7 @@ const CategoriesPreview = () => {
 
     getCategoriesMap();
   },[])
+
   return (
     <Fragment>
       {/* one line return (),  mutiple line return {} */}

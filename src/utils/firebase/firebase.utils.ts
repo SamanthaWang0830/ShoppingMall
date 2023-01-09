@@ -1,3 +1,4 @@
+import {ICategory} from '../../components/index';
 //Firstly, 让firebase可以CRUD to the db
 import {initializeApp} from 'firebase/app'
 
@@ -11,6 +12,8 @@ import {
     signInWithEmailAndPassword,
     signOut,
     onAuthStateChanged,
+    User,
+    NextOrObserver
 } from 'firebase/auth'
 
 //doc 从db中拿取document， getDoc setDoc从document中拿取data
@@ -22,7 +25,8 @@ import {
     collection,
     writeBatch,
     query,
-    getDocs
+    getDocs,
+    QueryDocumentSnapshot,
 } from 'firebase/firestore'
 
 const firebaseConfig = {
@@ -49,8 +53,12 @@ export const signInWithGoogleRedirect= ()=> signInWithRedirect(auth,googleProvid
 
 export const db= getFirestore()
 
+interface ObjectToAdd{
+    title:string
+}
+
 //1.collection的关键字 2.the actual doc that we want to add（json object）
-export const addCollectionAndDocuments=async(collectionKey,objectsToAdd)=>{
+export const addCollectionAndDocuments=async<T extends ObjectToAdd>(collectionKey:string,objectsToAdd:T[]):Promise<void>=>{
     //在db这个database中找一个关键字叫collectionKey的，没有的话，firebase自动创建一个空的
     const collectionRef=collection(db, collectionKey)
     const batch=writeBatch(db)
@@ -64,17 +72,12 @@ export const addCollectionAndDocuments=async(collectionKey,objectsToAdd)=>{
     console.log('done')
 }
 
-export const getCategoriesAndDocuments=async()=>{
+export const getCategoriesAndDocuments=async():Promise<ICategory[]>=>{
     const collectionRef=collection(db,'categories')
     const q=query(collectionRef)
 
     const querySnapshot= await getDocs(q)
-    const categoryMap= querySnapshot.docs.reduce((acc,docSnapshot)=>{
-        const {title,items}=docSnapshot.data()
-        acc[title.toLowerCase()]=items
-        return acc
-    },{})
-    return categoryMap
+    return querySnapshot.docs.map((docSnapshot)=>docSnapshot.data() as ICategory)
 }
 /* 
 {
@@ -88,8 +91,18 @@ export const getCategoriesAndDocuments=async()=>{
 }
 */
 
+interface AdditionalInformation{
+    displayName? : string
+}
+
+interface UserData{
+    createAt:Date,
+    displayName : string,
+    email:string
+}
+
 //建一个Users的document
-export const createUserDocumentFromAuth= async (userAuth, additionalInformation={})=>{
+export const createUserDocumentFromAuth= async (userAuth:User, additionalInformation={} as AdditionalInformation):Promise<void | QueryDocumentSnapshot<UserData> >=>{
     if(!userAuth) return;
 
     const userDocRef= doc(db, 'users', userAuth.uid)
@@ -112,19 +125,15 @@ export const createUserDocumentFromAuth= async (userAuth, additionalInformation=
                 ...additionalInformation
             })
         } catch (error){
-            console.log('error creating the user', error.message);
+            console.log('error creating the user', error);
         }
     }
-    return userDocRef
+    return userSnapshot as QueryDocumentSnapshot<UserData>
 }
 
-export const createAuthUserWithEmailAndPassword = async (email, password)=>{
-    if (!email || !password) return ;
 
-    return await createUserWithEmailAndPassword(auth, email, password)
-}
 
-export const signInAuthUserWithEmailAndPassword = async (email, password)=>{
+export const signInAuthUserWithEmailAndPassword = async (email:string, password:string)=>{
     if (!email || !password) return ;
 
     return await signInWithEmailAndPassword(auth, email, password)
@@ -133,6 +142,17 @@ export const signInAuthUserWithEmailAndPassword = async (email, password)=>{
 export const signOutUser= async ()=> await signOut(auth)
 
 //当authentication change时就会执行这个回调函数
-export const onAuthStateChangedListener= (callback)=> onAuthStateChanged(auth, callback)
+export const onAuthStateChangedListener= (callback:NextOrObserver<User>)=> onAuthStateChanged(auth, callback)
 
-
+export const getCurrentUser=():Promise<User| null>=>{
+    return new Promise((resolve, reject)=>{
+        const unsubscribe= onAuthStateChanged(
+            auth,
+            (userAuth)=>{
+                unsubscribe()
+                resolve(userAuth)
+            },
+            reject
+        )
+    })
+}

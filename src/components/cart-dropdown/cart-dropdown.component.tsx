@@ -7,15 +7,24 @@ import { CartDropdownContainer,CartItems,EmptyMessage } from './cart-dropdown.st
 //this is a hook that can allow the button'gotocheckout' to the checkout page
 import { useNavigate } from 'react-router-dom'
 import { useSelector,useDispatch} from "react-redux";
-import { selectCartItems,setCartTotal,setCartCount } from '../../store/cartSlide';
+import {setCartTotal} from '../../store/cartSlide';
+import { RootState } from '../../store/store'
+
+export interface ICartItem{
+    quantity:number,
+    price:number,
+    id:number,
+    name:string,
+    imageUrl:string,
+}
 
 const CartDropdown =()=>{
     const dispatch=useDispatch()
     //const {cartItems}= useContext(CartContext)
-    const cartItems=useSelector(selectCartItems)
+    const cartItems=useSelector((state:RootState)=>state.cart.cartItems)
 
     useEffect(()=>{
-        const newCartTotal= cartItems.reduce((total, cartItem)=> total + cartItem.quantity*cartItem.price ,0)
+        const newCartTotal= cartItems.reduce((total:number, cartItem:ICartItem)=> total + cartItem.quantity*cartItem.price ,0)
         dispatch(setCartTotal(newCartTotal))
     }, [cartItems]) 
 
@@ -29,7 +38,7 @@ const CartDropdown =()=>{
     return (
         <CartDropdownContainer>
             <CartItems>
-                {cartItems.length ?cartItems.map((item) => (
+                {cartItems.length ?cartItems.map((item:ICartItem) => (
                     <CartItem key={item.id} cartItem={item} />
                 )):<EmptyMessage>Your cart is empty</EmptyMessage>}
             </CartItems>

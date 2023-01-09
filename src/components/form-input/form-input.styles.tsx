@@ -8,8 +8,11 @@ const shrinkLabelStyles = css`
   font-size: 12px;
   color: ${mainColor};
 `
+interface IProps{
+  shrink? : boolean
+}
 
-export const FormInputLabel = styled.label`
+export const FormInputLabel = styled.label<IProps>`
   color: ${subColor};
   font-size: 16px;
   font-weight: normal;

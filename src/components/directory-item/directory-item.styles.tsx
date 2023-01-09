@@ -1,7 +1,10 @@
 import styled from 'styled-components'
 
+interface IProps{
+  imageUrl:string
+}
 //style={{backgroundImage: `url(${imageUrl})`}}
-export const BackgroundImage= styled.div`
+export const BackgroundImage= styled.div<IProps>`
   width: 100%;
   height: 100%;
   background-size: cover;

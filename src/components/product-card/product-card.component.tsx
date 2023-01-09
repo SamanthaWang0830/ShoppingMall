@@ -1,20 +1,27 @@
 import {ProductCartContainer,Footer,Name,Price} from './product-card.styles';
 import Button,{button_type_classes} from '../button/button.component' 
-import { useEffect } from 'react'
+import { FC, useEffect } from 'react'
 //import { useContext } from 'react';
 //import { CartContext } from '../../contexts/cart.context';
 import { useSelector,useDispatch} from "react-redux";
-import { addItemToCart,selectCartItems ,setCartCount} from '../../store/cartSlide';
+import { addItemToCart,setCartCount} from '../../store/cartSlide';
+import { ICategoryItem } from '..';
+import { ICartItem } from '../cart-dropdown/cart-dropdown.component';
+import { RootState } from '../../store/store'
 
-const ProductCard=({product})=>{
+
+interface IProps{
+    product:ICategoryItem
+}
+const ProductCard:FC<IProps>=({product})=>{
     const { name, price, imageUrl}= product
 
     //const {addItemToCart}= useContext(CartContext)
     const dispatch=useDispatch()
-    const cartItems=useSelector(selectCartItems)
+    const cartItems=useSelector((state:RootState)=>state.cart.cartItems)
     const addProductToCart = ()=> dispatch(addItemToCart(product));
     useEffect(()=>{
-        const newCartCount= cartItems.reduce((total, cartItem)=> total + cartItem.quantity,0)
+        const newCartCount= cartItems.reduce((total:number, cartItem:ICartItem)=> total + cartItem.quantity,0)
         dispatch(setCartCount(newCartCount))
     }, [cartItems])
 

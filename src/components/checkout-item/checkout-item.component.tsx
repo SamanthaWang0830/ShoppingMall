@@ -3,8 +3,13 @@ import { ImageContainer,CheckoutItemContainer,BaseSpan,Quantity,Arrow,Value,Remo
 //import { useContext } from 'react'
 import { useSelector,useDispatch} from "react-redux";
 import { addItemToCart, removeItemToCart,clearItemFromCart} from '../../store/cartSlide';
+import { ICartItem } from '../cart-dropdown/cart-dropdown.component';
+import { FC } from 'react';
 
-const ChechoutItem=({cartItem})=>{
+interface IProps{
+    cartItem:ICartItem
+}
+const ChechoutItem:FC<IProps> =({cartItem})=>{
     const {name, quantity, price,imageUrl} =cartItem
 
     //const {clearItemFromCart, addItemToCart, removeItemToCart}= useContext(CartContext)

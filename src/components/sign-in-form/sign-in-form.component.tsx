@@ -1,4 +1,4 @@
-import { useState} from "react";
+import { useState,ChangeEvent, FormEvent } from "react";
 
 import FormInput from '../form-input/form-input.component'
 import Button,{button_type_classes} from "../button/button.component"
@@ -28,7 +28,7 @@ const SignInForm = ()=>{
         await signInWithGooglePopup()
     }
 
-    const handleSubmit= async (event)=>{
+    const handleSubmit= async (event: FormEvent<HTMLFormElement>)=>{
         event.preventDefault()
         
         try{
@@ -36,21 +36,12 @@ const SignInForm = ()=>{
             resetFormFields()
 
         } catch (error) {
-            switch (error.code) {
-              case 'auth/wrong-password':
-                alert('incorrect password for email');
-                break;
-              case 'auth/user-not-found':
-                alert('no user associated with this email');
-                break;
-              default:
-                console.log(error);
-            }
+            console.log('user sign in failed', error);
           }
 
     }
 
-    const handleChange =(event)=>{
+    const handleChange =(event: ChangeEvent<HTMLInputElement>)=>{
         const {name, value}= event.target
         setFormFeilds({...formFeilds, [name]:value})
     }

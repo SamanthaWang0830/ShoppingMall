@@ -9,22 +9,30 @@ import CartDropdown from '../../components/cart-dropdown/cart-dropdown.component
 import { NavigationContainer ,LogoContainer,NavLinks,NavLink} from "./navigation.styles";
 
 import { useSelector,useDispatch} from "react-redux";
-import { selectUser,setCurrentUser } from "../../store/userSlice";
-import {selectIsCartOpen} from '../../store/cartSlide'
+import { setCurrentUser } from "../../store/userSlice";
+import { User} from "firebase/auth";
 import {
   onAuthStateChangedListener,
   createUserDocumentFromAuth,
 } from '../../utils/firebase/firebase.utils';
- 
+import type { RootState } from "../../store/store";
+
+
+
 const Navigation=()=>{
   const dispatch=useDispatch()
   //const {currentUser} =useContext(UserContext)
-  const currentUser=useSelector(selectUser)
+  const currentUser=useSelector((state:RootState)=>state.user.currentUser);
+
   //const {isCartOpen}= useContext(CartContext)
-  const isCartOpen=useSelector(selectIsCartOpen)
+  const isCartOpen=useSelector((state:RootState)=>state.cart.isCartOpen)
+
+  console.log('====================================');
+  console.log(currentUser);
+  console.log('====================================');
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChangedListener((user) => {
+    const unsubscribe = onAuthStateChangedListener((user:User | null) => {
       if (user) {
         createUserDocumentFromAuth(user);
       }

@@ -1,6 +1,11 @@
 import { CartItemContainer,ItemDetails } from "./cart-item.styles"
+import { ICartItem } from "../cart-dropdown/cart-dropdown.component"
+import { FC } from "react"
 
-const CartItem =({cartItem})=>{
+interface IProps{
+    cartItem:ICartItem
+}
+const CartItem :FC<IProps>=({cartItem})=>{
     const {name, quantity, price, imageUrl} = cartItem
     return (
         <CartItemContainer>

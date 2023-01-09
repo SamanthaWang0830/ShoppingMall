@@ -1,13 +1,10 @@
-import { useState} from 'react';
-
+import { useState, FormEvent, ChangeEvent } from 'react';
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
-
 import {
-  createAuthUserWithEmailAndPassword,
-  createUserDocumentFromAuth,
+  createUserDocumentFromAuth,auth
 } from '../../utils/firebase/firebase.utils';
-
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { SignUpContainer } from './sign-up-form.styles'
 
 const defaultFormFields = {
@@ -16,6 +13,11 @@ const defaultFormFields = {
   password: '',
   confirmPassword: '',
 };
+
+export const createAuthUserWithEmailAndPassword = async (email:string, password:string)=>{
+  if (!email || !password) return ;
+  return await createUserWithEmailAndPassword(auth, email, password)
+}
 
 const SignUpForm = () => {
   //设置初始表单里面的值 都为空
@@ -28,7 +30,7 @@ const SignUpForm = () => {
   };
   
   //当点击提交时
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     //取消事件的默认行为
     event.preventDefault();
   
@@ -38,23 +40,21 @@ const SignUpForm = () => {
     }
   
     try {
-      const { user } = await createAuthUserWithEmailAndPassword(email,password);
-  
-      await createUserDocumentFromAuth(user, { displayName });
+      createAuthUserWithEmailAndPassword(email,password).then((userCredential)=>{
+        let user = userCredential!.user
+        createUserDocumentFromAuth(user, { displayName });
+      })
+      
       //调用清除表单里所有的值
       resetFormFields();
 
     } catch (error) {
-      if (error.code === 'auth/email-already-in-use') {
-        alert('Cannot create user, email already in use');
-      } else {
-        console.log('user creation encountered an error', error);
-      }
+      console.log('user creation encountered an error', error);
     }
   };
 
   //当改变时
-  const handleChange = (event) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     //console.log(event.target); 整个标签
     const { name, value } = event.target;
     
@@ -100,7 +100,7 @@ const SignUpForm = () => {
               name='confirmPassword'
               value={confirmPassword}
             />
-            <Button buttonType='inverted' type='submit'>Sign Up</Button>
+            <Button type='submit'>Sign Up</Button>
           </form>
         </SignUpContainer>
   );
