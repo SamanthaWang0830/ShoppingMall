@@ -1,16 +1,21 @@
 import './checkout.styles.scss';
-//import { useContext } from 'react'
+import { useEffect } from 'react'
 //import { CartContext } from '../../contexts/cart.context'
 import ChechoutItem from '../../components/checkout-item/checkout-item.component'
-import { useSelector} from "react-redux";
+import { useSelector,useDispatch} from "react-redux";
 import { ICartItem } from '../../components/cart-dropdown/cart-dropdown.component';
 import { RootState } from '../../store/store'
+import {setCartTotal} from '../../store/cartSlide';
 
 const Chechout= ()=>{
-    
+    const dispatch=useDispatch()
     //const {cartItems,cartTotal}= useContext(CartContext)
     const cartItems=useSelector((state:RootState)=>state.cart.cartItems)
     const cartTotal=useSelector((state:RootState)=>state.cart.cartTotal)
+    useEffect(()=>{
+        const newCartTotal= cartItems.reduce((total:number, cartItem:ICartItem)=> total + cartItem.quantity*cartItem.price ,0)
+        dispatch(setCartTotal(newCartTotal))
+    }, [cartItems])
     
     return (
         <div className='checkout-container'>
