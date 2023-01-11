@@ -4,6 +4,10 @@ import cartReducer from './cartSlide'
 import categoriesReducer from './categoriesSlide'
 
 export const store= configureStore({
+    middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
     reducer: {
         user:userReducer,
         cart:cartReducer,

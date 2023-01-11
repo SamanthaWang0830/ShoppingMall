@@ -11,24 +11,36 @@ import { ICategoryItem } from '../../components';
 
 const Category=()=>{
     const {category}=useParams()
-    //const {categoriesMap}=useContext(CategoriesContext)
-    const categoriesMap=useSelector((state: RootState) => state.categories.categoriesMap)
+
     const dispatch=useDispatch()
     useEffect(()=>{
         const getCategoriesMap = async () => {
-          const categoryMap = await getCategoriesAndDocuments();
-          console.log(categoryMap);
-          dispatch(setCategoriesMap(categoryMap));
+          const categoriesMap = await getCategoriesAndDocuments();
+          console.log('===你好你好===');
+          console.log(categoriesMap);
+          console.log('===你好你好===');
+          dispatch(setCategoriesMap(categoriesMap));
         };
     
         getCategoriesMap();
     },[])
-    const [products,setProducts]= useState([])
+
+    const categoriesMap=useSelector((state: RootState) => state.categories.categoriesMap)
+    const [products,setProducts]= useState<ICategoryItem[]>([])
 
     //如果category或者categoriesMap变了，就重新加载页面
     useEffect(() => {
-        setProducts(categoriesMap[category!]);
+        const realcategory= categoriesMap.filter((singlecategory)=>singlecategory.title ==category)
+        if(realcategory[0]){
+            const realProducts= realcategory[0]["items"];
+            console.log(realProducts);
+            setProducts(realProducts);
+        }
     }, [category, categoriesMap]);
+
+    console.log('以下是products内容');
+    console.log(products);
+    console.log('以上是内容');
 
     return (
     <Fragment>

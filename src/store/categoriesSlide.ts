@@ -1,19 +1,19 @@
-import { createSlice} from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction} from '@reduxjs/toolkit';
+import { ICategory } from '../components/index';
 
 interface CategoriesState{
-    categoriesMap:object
+    categoriesMap:ICategory[]
 }
 
 const initialState:CategoriesState={
-    categoriesMap:{}
+    categoriesMap:[]
 }
 
 const categoriesSlice = createSlice({
     name:'categories',
     initialState,
     reducers:{
-        setCategoriesMap:(state,action: PayloadAction<object>)=>{
+        setCategoriesMap:(state,action)=>{
             state.categoriesMap= action.payload
         }
     }

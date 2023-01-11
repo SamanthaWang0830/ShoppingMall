@@ -1,6 +1,6 @@
 import {useEffect,Fragment} from 'react';
 //import { CategoriesContext } from '../../contexts/categories.context';
-import CategoryPreview from '../../components/category-preview/categort-preview.component';
+import CategoryPreview from '../../components/category-preview/category-preview.component';
 import { getCategoriesAndDocuments} from "../../utils/firebase/firebase.utils";
 import { useSelector,useDispatch} from "react-redux";
 import { setCategoriesMap } from '../../store/categoriesSlide';
@@ -27,9 +27,10 @@ const CategoriesPreview = () => {
     <Fragment>
       {/* one line return (),  mutiple line return {} */}
       {Object.keys(categoriesMap).map((title) => {
-        const products= categoriesMap[title]
+        const products= categoriesMap[title].items 
+        const name= categoriesMap[title].title
         return (
-          <CategoryPreview key={title} title={title} products={products}/>
+          <CategoryPreview key={name} title={name} products={products}/>
         )
       })}
     </Fragment>
